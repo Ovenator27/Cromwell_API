@@ -1,12 +1,14 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const apiRouter = require("./routers/api.router");
+const cors = require("cors");
 const {
   handleCustomErrors,
   handlePsqlErrors,
   handleServerErrors,
 } = require("./controllers/errors.controllers");
 const app = express();
+
+app.use(cors());
 
 app.use(express.json());
 
