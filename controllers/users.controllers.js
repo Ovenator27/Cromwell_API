@@ -3,6 +3,8 @@ const {
   insertUser,
   validateUser,
 } = require("../models/users.models");
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 exports.postUser = (req, res, next) => {
   const { body } = req;
@@ -17,7 +19,11 @@ exports.loginUser = (req, res, next) => {
   const { body } = req;
   validateUser(body)
     .then((user) => {
-      res.status(200).send({user});
+      const accessToken = jwt.sign(
+        { username: user.username },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      res.status(200).send({ user, accessToken });
     })
     .catch((err) => {
       next(err);
