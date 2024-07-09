@@ -32,7 +32,6 @@ exports.insertUser = async (body) => {
 
 exports.validateUser = async (body) => {
   const { email, password } = body;
-  const hash = await bcrypt.hash(password, 10)
   if (email && password) {
     return db
       .query(`SELECT * FROM users WHERE email = $1`, [email])
