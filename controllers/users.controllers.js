@@ -23,7 +23,7 @@ exports.loginUser = (req, res, next) => {
         { username: user.username },
         process.env.ACCESS_TOKEN_SECRET
       );
-      res.status(200).send({ user, accessToken });
+      res.status(200).send({ user_id: user.user_id, accessToken });
     })
     .catch((err) => {
       next(err);

@@ -9,7 +9,7 @@ afterAll(() => db.end());
 
 describe("/api/users/register", () => {
   describe("POST requests", () => {
-    test("POST 200: creates a new user and responds with created user", () => {
+    test("POST 200: creates a new user and responds with newly created user", () => {
       return request(app)
         .post("/api/users/register")
         .send({
@@ -23,7 +23,6 @@ describe("/api/users/register", () => {
             user_id: 4,
             username: "test4",
             email: "test4@gmail.com",
-            password: "Password4",
           });
         });
     });
@@ -51,12 +50,25 @@ describe("/api/users/register", () => {
           expect(msg).toBe("User Already Exists");
         })
     });
+    test('POST 409: passwords are not case sensitive', () => {
+      return request(app)
+        .post("/api/users/register")
+        .send({
+          username: "test1",
+          email: "Test1@gmail.com",
+          password: "Password"
+        })
+        .expect(409)
+        .then(({body: {msg}}) => {
+          expect(msg).toBe("User Already Exists");
+        })
+    });
   });
 });
 
 describe("/api/users/login", () => {
   describe("POST requests", () => {
-    test("POST 200: responds when email and password matches user in database", () => {
+    test("POST 200: responds when email and password matches user in database with user_id and access token", () => {
       return request(app)
         .post("/api/users/login")
         .send({
@@ -64,12 +76,8 @@ describe("/api/users/login", () => {
           password: "Password1",
         })
         .expect(200)
-        .then(({ body: { user } }) => {
-          expect(user).toMatchObject({
-            username: "test1",
-            email: "test1@gmail.com",
-            password: "Password1",
-          });
+        .then(({ body }) => {
+          expect(body.user_id).toBe(1)
         });
     });
     test('POST 401: responds with error code and message when credentials are invalid', () => {
@@ -99,7 +107,7 @@ describe("/api/users/:user_id", () => {
             user_id: 1,
             username: "test1",
             email: "test1@gmail.com",
-            password: "Password1",
+            password: expect.any(String),
           });
         });
     });
